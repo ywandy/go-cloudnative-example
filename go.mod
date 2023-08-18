@@ -1,0 +1,1 @@
+module go-cloudnative-example
