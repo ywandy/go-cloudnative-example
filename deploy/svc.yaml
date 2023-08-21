@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: devops-example
+  name: svc-devops-example
+spec:
+  type: "ClusterIP"
+  ports:
+    - name: "tcp"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: devops-example

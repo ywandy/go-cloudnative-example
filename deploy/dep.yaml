@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-devops-example
+  labels:
+    app: devops-example
+spec:
+  #replicas: 1
+  selector:
+    matchLabels:
+      app: devops-example
+  #滚动更新策略,主要用来负责原地重启
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: devops-example
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - devops-example
+                topologyKey: kubernetes.io/hostname
+              weight: 60
+      containers:
+        - name: devops-example
+          image: ywkfhub.gz4399.com/devops/devops-example:<imageTag>
+          command:
+            - ./main
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: hub4399
